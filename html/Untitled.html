@@ -26,7 +26,7 @@
 		load();
 
 		function getTopic(id) {
-			var topics = model.sharedInstance().topics;
+			var topics = model.sharedInstance().selectedTopics;
 			$(topics).each(function(index, element) {
 				if (element.id == id) {
 					topic = element;
@@ -37,7 +37,7 @@
 		}
 
 		function currentTopic() {	
-			return model.sharedInstance().topics[model.sharedInstance().currentIdx];
+			return model.sharedInstance().selectedTopics[model.sharedInstance().currentIdx];
 		}
 
 		function load() {
@@ -65,7 +65,7 @@
 
 			var m = model.sharedInstance();
 			prevv.disabled = (m.currentIdx == 0);
-			nextt.disabled = (m.currentIdx + 1 == m.topics.length);
+			nextt.disabled = (m.currentIdx + 1 == m.selectedTopics.length);
 		}
 
 		function record() {
@@ -75,7 +75,7 @@
 					results.push(index);
 				}
 			});
-			model.sharedInstance().topics[model.sharedInstance().currentIdx].results = results;
+			model.sharedInstance().selectedTopics[model.sharedInstance().currentIdx].results = results;
 		}
 
 		function next() {
@@ -95,30 +95,34 @@
 
 		function handing() {
 			var m = model.sharedInstance();
-			var count = m.topics.length;
+			var count = m.selectedTopics.length;
 			var correct = 0;
-			$.each(m.topics, function(index, element) {
+			$.each(m.selectedTopics, function(index, element) {
 				if (JSON.stringify(element.results) == JSON.stringify(element.correct)) {
 					++correct;
 				}
 			});
 			var datee = new Date();
 			var hour = Math.floor((datee - crrentTime) / 1000 / 60 / 60);
-			var minute = Math.floor((datee - crrentTime) / 1000 / 60 % 60);
-			var second = Math.floor((datee - crrentTime) / 1000 % 60);
+			var minute = "00" + Math.floor((datee - crrentTime) / 1000 / 60 % 60);
+			minute = minute.substr(minute.length - 2);
+			var second = "00" + Math.floor((datee - crrentTime) / 1000 % 60);
+			second = second.substr(second.length - 2);
 			var timeString = hour + ":" + minute + ":" + second;
 
 			$.ajax({
 				'type': 'POST',
-				'url': "http://192.168.71.77:8080/exam/exam/uploadResult",
+				'url': "http://121.42.192.153/exam/uploadResult",
 				'contentType': 'application/json',
-				'data': JSON.stringify({"session":m.session, "numberOfTopics":count, "numberOfCorrect":correct, "numberOfMistake":count - correct, "time":timeString, "system":"training"}),
+				'data': JSON.stringify({"session":m.session, "numberOfTopics":count, "numberOfCorrect":correct, "numberOfMistake":count - correct, "time":timeString, "system":m.system}),
 				'dataType': 'json',
 				'success': function (data, status) {
 					if (!data.success) {
 						alert(data.msg);
-						return;
+					} else {
+						alert("提交成功, 共计" + count + "道题，答对" + correct "道题");
 					}
+					location.href = "index.html";
 				}
 			});
 		}

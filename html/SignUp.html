@@ -71,8 +71,58 @@
 					m.authority = data.authority;
 					m.session = data.session;
 
-					storage();
-					location.href = "Untitled.html";
+					$.ajax({
+						'type': 'POST',
+						'url': "http://121.42.192.153/topics/query",
+						'contentType': 'application/json',
+						'data': JSON.stringify({"session":m.session}),
+						'dataType': 'json',
+						'success': function (data, status) {
+							if (!data.success) {
+								alert(data.msg);
+								return;
+							}
+
+							m.topics = new Array();
+							$(data.topics).each(function(index, element) {
+								m.topics.push({"id":element.topicID, "timestamp":element.timestamp});
+							});
+
+							var topics = new Array();
+							while(topics.length != 20) {
+								var random = Math.floor(Math.random() * (data.topics.length));
+								if ($.inArray(m.topics[random].id, topics) == -1) {
+									topics.push(m.topics[random].id);
+								}
+							}
+
+							$.ajax({
+								'type': 'POST',
+								'url': "http://121.42.192.153/topics/get",
+								'contentType': 'application/json',
+								'data': JSON.stringify({"session":m.session, topics:topics}),
+								'dataType': 'json',
+								'success': function (data, status) {
+									m.selectedTopics = new Array();
+									$(data.topics).each(function(index, element) {
+										var topic;
+										$(m.topics).each(function(index, elementt) {
+											if (elementt.id == element.topicID) {
+												topic = elementt;
+												return false;
+											}
+										});
+										topic.description = element.description;
+										topic.options = element.options;
+										topic.correct = element.correct;
+										m.selectedTopics.push(topic);
+									});
+									storage();
+									location.href = "SelectType.html";
+								}
+							});
+						}
+					});
 				}
 			});
 		}

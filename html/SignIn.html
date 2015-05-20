@@ -75,25 +75,37 @@
 								m.topics.push({"id":element.topicID, "timestamp":element.timestamp});
 							});
 
-							var topicIdxs = new Array();
-							while(topicIdxs.length != 20) {
+							var topics = new Array();
+							while(topics.length != 20) {
 								var random = Math.floor(Math.random() * (data.topics.length));
-								if ($.inArray(m.topics[random].id, topicIdxs) == -1) {
-									topicIdxs.push(m.topics[random].id);
+								if ($.inArray(m.topics[random].id, topics) == -1) {
+									topics.push(m.topics[random].id);
 								}
 							}
-//							var ids = topicIdxs.join(",");
-							
+
 							$.ajax({
 								'type': 'POST',
 								'url': "http://121.42.192.153/topics/get",
 								'contentType': 'application/json',
-								'data': JSON.stringify({"session":m.session, topics:topicIdxs}),
+								'data': JSON.stringify({"session":m.session, topics:topics}),
 								'dataType': 'json',
 								'success': function (data, status) {
-									alert(JSON.stringify(data));
+									m.selectedTopics = new Array();
+									$(data.topics).each(function(index, element) {
+										var topic;
+										$(m.topics).each(function(index, elementt) {
+											if (elementt.id == element.topicID) {
+												topic = elementt;
+												return false;
+											}
+										});
+										topic.description = element.description;
+										topic.options = element.options;
+										topic.correct = element.correct;
+										m.selectedTopics.push(topic);
+									});
 									storage();
-									location.href = "Untitled.html";
+									location.href = "SelectType.html";
 								}
 							});
 						}
