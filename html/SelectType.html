@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+	<head>
+		<link rel="stylesheet" media="screen" href="./css/style.css">
+	</head>
+
+	<body>
+		<form id = "controls">
+			<input type="button" value="备战训练" onclick="training()">
+			<input type="button" value="区域赛" onclick="semifinals()" disabled=true>
+			<input type="button" value="决赛" onclick="finals()" disabled=true>
+		</form>
+	</body>
+
+	<script type="text/javascript" src="./jquery/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="./js/model.js"></script>
+	<script>
+		function training() {
+			var m = model.sharedInstance();
+			m.system = "training";
+			storage();
+			location.href = "Untitled.html";
+		}
+
+		function semifinals() {
+			var m = model.sharedInstance();
+			m.system = "semifinals";
+			storage();
+			location.href = "Untitled.html";
+		}
+
+		function finals() {
+			var m = model.sharedInstance();
+			m.system = "finals";
+			storage();
+			location.href = "Untitled.html";
+		}
+
+	</script>
+</html>
+

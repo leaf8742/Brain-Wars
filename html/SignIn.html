@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+	<head>
+		<link rel="stylesheet" media="screen" href="./css/style.css">
+	</head>
+
+	<body>
+		<form>
+			<p>
+			用户名
+			<input type="text" id="account" value="13478671881">
+			</p>
+			<p>
+			密码
+			<input type="password" id="password" value="111111">
+			</p>
+		</form>
+
+		<form id = "controls">
+			<input type="button" id="signInn" value="登录" onclick="signIn()">
+		</form>
+	</body>
+
+	<script type="text/javascript" src="./jquery/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="./js/model.js"></script>
+	<script>
+		function signIn() {
+			var account = document.getElementById("account");
+			var password = document.getElementById("password");
+			var signIn = document.getElementById("signInn");
+			account.disabled = true;
+			password.disabled = true;
+			signIn.disabled = true;
+			var jsonData = {"account":account.value, "password":password.value};
+			var jsonString = JSON.stringify(jsonData);
+			$.ajax({
+				'type': 'POST',
+				'url': "http://121.42.192.153/user/signIn",
+				'contentType': 'application/json',
+				'data': jsonString,
+				'dataType': 'json',
+				'success': function (data, status) {
+					if (!data.success) {
+						alert(data.msg);
+						account.disabled = false;
+						password.disabled = false;
+						signIn.disabled = false;
+						return;
+					}
+
+					var m = model.sharedInstance();
+					m.account = account.value;
+					m.password = password.value;
+					m.name = data.name;
+					m.locality = data.locality;
+					m.region = data.region;
+					m.authority = data.authority;
+					m.session = data.session;
+
+					$.ajax({
+						'type': 'POST',
+						'url': "http://121.42.192.153/topics/query",
+						'contentType': 'application/json',
+						'data': JSON.stringify({"session":m.session}),
+						'dataType': 'json',
+						'success': function (data, status) {
+							if (!data.success) {
+								alert(data.msg);
+								return;
+							}
+
+							m.topics = new Array();
+							$(data.topics).each(function(index, element) {
+								m.topics.push({"id":element.topicID, "timestamp":element.timestamp});
+							});
+
+							var topicIdxs = new Array();
+							while(topicIdxs.length != 20) {
+								var random = Math.floor(Math.random() * (data.topics.length));
+								if ($.inArray(m.topics[random].id, topicIdxs) == -1) {
+									topicIdxs.push(m.topics[random].id);
+								}
+							}
+//							var ids = topicIdxs.join(",");
+							
+							$.ajax({
+								'type': 'POST',
+								'url': "http://121.42.192.153/topics/get",
+								'contentType': 'application/json',
+								'data': JSON.stringify({"session":m.session, topics:topicIdxs}),
+								'dataType': 'json',
+								'success': function (data, status) {
+									alert(JSON.stringify(data));
+									storage();
+									location.href = "Untitled.html";
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+	</script>
+</html>
+

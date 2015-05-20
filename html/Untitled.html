@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+	<head>
+		<link rel="stylesheet" media="screen" href="./css/style.css">
+	</head>
+
+	<body>
+		<form id = "description">
+		</form>
+
+		<form id ="options">
+		</form>
+
+		<form id = "controls">
+			<input type="button" id="prevv" value="上一题" onclick="prev()">
+			<input type="button" id="nextt" value="下一题" onclick="next()">
+			<input type="button" id="handingg" value="交卷" onclick="handing()">
+		</form>
+	</body>
+
+	<script type="text/javascript" src="./jquery/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="./js/model.js"></script>
+	<script>
+		var crrentTime = new Date();
+		load();
+
+		function getTopic(id) {
+			var topics = model.sharedInstance().topics;
+			$(topics).each(function(index, element) {
+				if (element.id == id) {
+					topic = element;
+					return false;
+				}
+			});
+			return topic;
+		}
+
+		function currentTopic() {	
+			return model.sharedInstance().topics[model.sharedInstance().currentIdx];
+		}
+
+		function load() {
+			var input = document.createElement("label");
+			input.innerHTML = currentTopic().description;
+			document.getElementById("description").appendChild(input);
+
+			$(currentTopic().options).each(function(index, element){
+				var checkbox = document.createElement("input");
+				checkbox.type = "checkbox";
+				checkbox.id = "option_" + index;
+				document.getElementById("options").appendChild(checkbox);
+
+				var input = document.createElement("label")
+				input.innerHTML = element;
+				document.getElementById("options").appendChild(input);
+
+				var br = document.createElement("br"); 
+				document.getElementById("options").appendChild(br);
+			});
+
+			$(currentTopic().results).each(function(index, element) {
+				document.getElementById("option_" + element).checked = true;
+			});
+
+			var m = model.sharedInstance();
+			prevv.disabled = (m.currentIdx == 0);
+			nextt.disabled = (m.currentIdx + 1 == m.topics.length);
+		}
+
+		function record() {
+			var results = new Array;
+			$.each(document.getElementById("options"), function(index, element){
+				if (element.type == "checkbox" && element.checked) {
+					results.push(index);
+				}
+			});
+			model.sharedInstance().topics[model.sharedInstance().currentIdx].results = results;
+		}
+
+		function next() {
+			record();
+			$("#options").empty();
+			$("#description").empty();
+			++model.sharedInstance().currentIdx;
+			load();
+		}
+
+		function prev() {
+			$("#options").empty();
+			$("#description").empty();
+			--model.sharedInstance().currentIdx;
+			load();
+		}
+
+		function handing() {
+			var m = model.sharedInstance();
+			var count = m.topics.length;
+			var correct = 0;
+			$.each(m.topics, function(index, element) {
+				if (JSON.stringify(element.results) == JSON.stringify(element.correct)) {
+					++correct;
+				}
+			});
+			var datee = new Date();
+			var hour = Math.floor((datee - crrentTime) / 1000 / 60 / 60);
+			var minute = Math.floor((datee - crrentTime) / 1000 / 60 % 60);
+			var second = Math.floor((datee - crrentTime) / 1000 % 60);
+			var timeString = hour + ":" + minute + ":" + second;
+
+			$.ajax({
+				'type': 'POST',
+				'url': "http://192.168.71.77:8080/exam/exam/uploadResult",
+				'contentType': 'application/json',
+				'data': JSON.stringify({"session":m.session, "numberOfTopics":count, "numberOfCorrect":correct, "numberOfMistake":count - correct, "time":timeString, "system":"training"}),
+				'dataType': 'json',
+				'success': function (data, status) {
+					if (!data.success) {
+						alert(data.msg);
+						return;
+					}
+				}
+			});
+		}
+
+	</script>
+</html>
+

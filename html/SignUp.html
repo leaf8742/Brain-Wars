@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+	<head>
+		<link rel="stylesheet" media="screen" href="./css/style.css">
+	</head>
+
+	<body>
+		<div id="layout" class="layout" style="visibility: hidden"><img src="http://images.cnblogs.com/cnblogs_com/qiuyan/477435/o_31.gif" /></div>
+
+		<form>
+			登录帐号
+			<input type="text" id="account" value="13478671881">
+			<br />
+			登录密码
+			<input type="password" id="password" value="111111">
+			<br />
+			重复密码
+			<input type="password" id="confirm" value="111111">
+			<br />
+			所属大区
+			<input type="text" id="locality" value="华北">
+			<br />
+			所属地区
+			<input type="text" id="region" value="辽宁">
+			<br />
+			真实姓名
+			<input type="text" id="name" value="叶子">
+		</form>
+
+		<form id = "controls">
+			<input type="button" value="signUp" onclick="signUp()">
+		</form>
+	</body>
+
+	<script type="text/javascript" src="./jquery/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="./js/model.js"></script>
+	<script>
+		function signUp() {
+			var account = document.getElementById("account");
+			var password = document.getElementById("password");
+			var confirm = document.getElementById("confirm");
+			var locality = document.getElementById("locality");
+			var region = document.getElementById("region");
+			var name = document.getElementById("name");
+
+			if (password.value != confirm.value) {
+				alert("密码不一致，请重新输入");
+				return;
+			}
+
+			var jsonData = {"account":account.value, "password":password.value, "name":name.value, "locality":locality.value, "region":region.value};
+			var jsonString = JSON.stringify(jsonData);
+			$.ajax({
+				'type': 'POST',
+				'url': "http://192.168.71.77:8080/exam/user/signUp",
+				'contentType': 'application/json',
+				'data': jsonString,
+				'dataType': 'json',
+				'success': function (data, status) {
+					if (!data.success) {
+						alert(data.msg);
+						return;
+					}
+					var m = model.sharedInstance();
+					m.account = account.value;
+					m.password = password.value;
+					m.name = name.value;
+					m.locality = locality.value;
+					m.region = region.value;
+					m.authority = data.authority;
+					m.session = data.session;
+
+					storage();
+					location.href = "Untitled.html";
+				}
+			});
+		}
+	</script>
+</html>
+
