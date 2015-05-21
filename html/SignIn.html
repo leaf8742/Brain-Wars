@@ -5,21 +5,24 @@
 		<link rel="stylesheet" media="screen" href="./css/style.css">
 	</head>
 
-	<body>
+	<body><div id="container">
+    <div class="basic-grey">
 		<form>
 			<p>
-			用户名
-			<input type="text" id="account" value="13478671881">
+				<span>用户名</span>
+				<input type="text" id="account" value="13478671881">
 			</p>
 			<p>
-			密码
-			<input type="password" id="password" value="111111">
+				<span>密码</span>
+				<input type="password" id="password" value="111111">
 			</p>
 		</form>
 
 		<form id = "controls">
 			<input type="button" id="signInn" value="登录" onclick="signIn()">
 		</form>
+        </div>
+        </div>
 	</body>
 
 	<script type="text/javascript" src="./jquery/jquery-1.11.3.min.js"></script>
@@ -47,69 +50,83 @@
 						password.disabled = false;
 						signIn.disabled = false;
 						return;
-					}
-
-					var m = model.sharedInstance();
-					m.account = account.value;
-					m.password = password.value;
-					m.name = data.name;
-					m.locality = data.locality;
-					m.region = data.region;
-					m.authority = data.authority;
-					m.session = data.session;
-
-					$.ajax({
-						'type': 'POST',
-						'url': "http://121.42.192.153/topics/query",
-						'contentType': 'application/json',
-						'data': JSON.stringify({"session":m.session}),
-						'dataType': 'json',
-						'success': function (data, status) {
-							if (!data.success) {
-								alert(data.msg);
-								return;
+					} else if (account.value == "admin") {
+						var m = model.sharedInstance();						
+						$.ajax({
+							'type': 'POST',
+							'url': "http://121.42.192.153/exam/report",
+							'contentType': 'application/json',
+							'data': JSON.stringify({"session":m.session, system:"training", region:""}),
+							'dataType': 'json',
+							'success': function (data, status) {
+								
+								storage();
+								location.href = "SelectType.html";								
 							}
-
-							m.topics = new Array();
-							$(data.topics).each(function(index, element) {
-								m.topics.push({"id":element.topicID, "timestamp":element.timestamp});
-							});
-
-							var topics = new Array();
-							while(topics.length != 20) {
-								var random = Math.floor(Math.random() * (data.topics.length));
-								if ($.inArray(m.topics[random].id, topics) == -1) {
-									topics.push(m.topics[random].id);
+						});
+					} else {
+						var m = model.sharedInstance();
+						m.account = account.value;
+						m.password = password.value;
+						m.name = data.name;
+						m.locality = data.locality;
+						m.region = data.region;
+						m.authority = data.authority;
+						m.session = data.session;
+	
+						$.ajax({
+							'type': 'POST',
+							'url': "http://121.42.192.153/topics/query",
+							'contentType': 'application/json',
+							'data': JSON.stringify({"session":m.session}),
+							'dataType': 'json',
+							'success': function (data, status) {
+								if (!data.success) {
+									alert(data.msg);
+									return;
 								}
-							}
-
-							$.ajax({
-								'type': 'POST',
-								'url': "http://121.42.192.153/topics/get",
-								'contentType': 'application/json',
-								'data': JSON.stringify({"session":m.session, topics:topics}),
-								'dataType': 'json',
-								'success': function (data, status) {
-									m.selectedTopics = new Array();
-									$(data.topics).each(function(index, element) {
-										var topic;
-										$(m.topics).each(function(index, elementt) {
-											if (elementt.id == element.topicID) {
-												topic = elementt;
-												return false;
-											}
+	
+								m.topics = new Array();
+								$(data.topics).each(function(index, element) {
+									m.topics.push({"id":element.topicID, "timestamp":element.timestamp});
+								});
+	
+								var topics = new Array();
+								while(topics.length != 20) {
+									var random = Math.floor(Math.random() * (data.topics.length));
+									if ($.inArray(m.topics[random].id, topics) == -1) {
+										topics.push(m.topics[random].id);
+									}
+								}
+	
+								$.ajax({
+									'type': 'POST',
+									'url': "http://121.42.192.153/topics/get",
+									'contentType': 'application/json',
+									'data': JSON.stringify({"session":m.session, topics:topics}),
+									'dataType': 'json',
+									'success': function (data, status) {
+										m.selectedTopics = new Array();
+										$(data.topics).each(function(index, element) {
+											var topic;
+											$(m.topics).each(function(index, elementt) {
+												if (elementt.id == element.topicID) {
+													topic = elementt;
+													return false;
+												}
+											});
+											topic.description = element.description;
+											topic.options = element.options;
+											topic.correct = element.correct;
+											m.selectedTopics.push(topic);
 										});
-										topic.description = element.description;
-										topic.options = element.options;
-										topic.correct = element.correct;
-										m.selectedTopics.push(topic);
-									});
-									storage();
-									location.href = "SelectType.html";
-								}
-							});
-						}
-					});
+										storage();
+										location.href = "SelectType.html";
+									}
+								});
+							}
+						});
+					}
 				}
 			});
 		}

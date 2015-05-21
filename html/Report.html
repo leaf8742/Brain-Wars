@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+	<head>
+		<link rel="stylesheet" media="screen" href="./css/style.css">
+	</head>
+
+	<body>
+		<div id="container">
+			<div class="listBtn">
+				<p>
+					<input type="button" value="登录" onclick="signIn()">
+				</p>
+				<p>
+					<input type="button" value="注册" onclick="signUp()">
+				</p>
+		</div>
+	</div>
+	</body>
+
+	<script type="text/javascript" src="./jquery/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="./js/model.js"></script>
+	<script>
+		function signIn() {
+			location.href = "SignIn.html"
+		}
+
+		function signUp() {
+			location.href = "signUp.html"
+		}
+	</script>
+</html>
+
