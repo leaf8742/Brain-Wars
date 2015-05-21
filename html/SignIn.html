@@ -59,9 +59,9 @@
 							'data': JSON.stringify({"session":m.session, system:"training", region:""}),
 							'dataType': 'json',
 							'success': function (data, status) {
-								
+								m.reports = data.results;
 								storage();
-								location.href = "SelectType.html";								
+								location.href = "Report.html";								
 							}
 						});
 					} else {

@@ -6,27 +6,27 @@
 	</head>
 
 	<body>
-		<div id="container">
-			<div class="listBtn">
-				<p>
-					<input type="button" value="登录" onclick="signIn()">
-				</p>
-				<p>
-					<input type="button" value="注册" onclick="signUp()">
-				</p>
-		</div>
-	</div>
+		<form id = "reports">
+		</form>
 	</body>
 
 	<script type="text/javascript" src="./jquery/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="./js/model.js"></script>
 	<script>
-		function signIn() {
-			location.href = "SignIn.html"
-		}
+		load();
 
-		function signUp() {
-			location.href = "signUp.html"
+		function load() {
+			var reportss = model.sharedInstance().reports;
+			$(reportss).each(function(index, element){
+				var report = new String;
+				report = report + "用户" + element.account + "\n" + "分数" + (element.numberOfCorrect * 0.5) + "\n" + "用时" + element.time;
+
+				var checkbox = document.createElement("p");
+				var span = document.createElement("span");
+				span.innerHTML = report;
+				checkbox.appendChild(span);
+				document.getElementById("reports").appendChild(checkbox);
+			});
 		}
 	</script>
 </html>
