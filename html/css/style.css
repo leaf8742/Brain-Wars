@@ -147,3 +147,4 @@ input[type=button].active {
 }
 #container .listBtn p{ margin:20px 0 20px 0;}
 #container .listBtn input[type=button]{width:100px; display:block; margin:0 auto;}
+#container .gdfir{padding:0px; height:330px; overflow-y:auto; width:240px; }
