@@ -36,3 +36,17 @@ function Model() {
 	return model.sharedInstance();
 }
 
+// javascript传函数
+function a(){
+  alert('this is a');
+}
+
+function b(test){
+  test();//调用传入的函数
+}
+
+function c()
+{
+  b(a);
+}
+
