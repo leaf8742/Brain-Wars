@@ -1,6 +1,16 @@
 {
   "name": "一战到底",
   "version": "1.0",
-  "main": "index.html"
+  "main": "index.html",
+  "window": {
+    "title": "一战到底",
+    "frame": false,
+    "width": 1034,
+    "height": 500,
+    "min_width": 1034,
+    "min_height": 500,
+    "max_width": 1034,
+    "max_height": 500
+  },
 }
 
