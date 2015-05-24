@@ -1,0 +1,97 @@
+﻿<html>
+<!DOCTYPE html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="assets/css/reset.css">
+		<link rel="stylesheet" href="assets/css/supersized.css">
+		<link rel="stylesheet" href="assets/css/style.css">
+
+		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+		<div class="page-container">
+			<h1>一战到底</h1>
+			<div class="form_div">
+				<input type="text" name="account" class="account" placeholder="用户名" onkeyup="fn_keyup()">
+				<input type="password" name="password" class="password" placeholder="密码" onkeyup="fn_keyup()">
+				<button type="sign_in" class="sign_in_button" onclick="fn_sign_in()">登录</button>
+				<button type="sign_up" class="sign_up_button" onclick="fn_sign_up()">注册</button>
+				<div class="error">
+					<span>+</span>
+				</div>
+			</div>
+		</div>
+	</body>
+
+	<!-- Javascript -->
+	<script type="text/javascript" src="assets/js/jquery-1.11.3.min.js" ></script>
+	<script type="text/javascript" src="assets/js/scripts.js" ></script>
+	<script src="assets/js/supersized.3.2.7.min.js" ></script>
+	<script src="assets/js/supersized-init.js" ></script>
+	<script>
+		function fn_keyup() {
+			$(".error").fadeOut('fast');
+		}
+
+		function fn_sign_in() {
+			var account = $(".account").val();
+			var password = $(".password").val();
+			if(account == '') {
+				$(".error").fadeOut('fast', function(){
+					$(this).css('top', '27px');
+				});
+				$(".error").fadeIn('fast', function(){
+					$(".account").focus();
+				});
+				return;
+			} else if(password == '') {
+				$(".error").fadeOut('fast', function(){
+					$(this).css('top', '96px');
+				});
+				$(".error").fadeIn('fast', function(){
+					$(".password").focus();
+				});
+				return;
+			}
+
+			sign_in_request(account, password, function(data, status) {
+				if (!data.success) {
+					alert(data.msg);
+					return;
+				} else if (account == "admin") {
+				} else {
+					query_request(function(data, status) {
+						if (!data.success) {
+							alert(data.msg);
+							return;
+						}
+						get_topics_request(function(data, status) {
+							if (!data.success) {
+								alert(data.msg);
+								return;
+							}
+							storage();
+							location.href = "SelectType.html";
+						});
+					});
+				}
+			});
+		}
+
+		function fn_sign_up() {
+			location.href = "SignUp.html";
+		}
+	</script>
+
+</html>
+
