@@ -8,8 +8,6 @@
     "width": 1034,
     "height": 500,
     "min_width": 1034,
-    "min_height": 500,
-    "max_width": 1034,
-    "max_height": 500
+    "min_height": 500
   }
 }

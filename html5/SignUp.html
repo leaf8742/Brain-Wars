@@ -41,6 +41,7 @@
 	<script src="assets/js/supersized.3.2.7.min.js" ></script>
 	<script src="assets/js/supersized-init.js" ></script>
 	<script>
+
 		function fn_keyup() {
 			$(".error").fadeOut('fast');
 		}
@@ -48,12 +49,12 @@
 		function fn_sign_up() {
 			var account = $(".account").val();
 			var password = $(".password").val();
-			var confirm = $(".confirm").val();
+			var confirm_val = $(".confirm").val();
 			var locality = $(".locality").val();
 			var region = $(".region").val();
 			var name = $(".name").val();
 
-			if (password != confirm) {
+			if (password != confirm_val) {
 				alert("密码不一致，请重新输入");
 				return;
 			}
@@ -64,20 +65,25 @@
 					return;
 				} else if (account == "admin") {
 				} else {
-					query_request(function(data, status) {
-						if (!data.success) {
-							alert(data.msg);
-							return;
-						}
-						get_topics_request(function(data, status) {
+					if (confirm("注册成功，是否现在进入答题？")) {
+						query_request(function(data, status) {
 							if (!data.success) {
 								alert(data.msg);
 								return;
 							}
-							storage();
-							location.href = "SelectType.html";
+							get_topics_request(function(data, status) {
+								if (!data.success) {
+									alert(data.msg);
+									return;
+								}
+								storage();
+								location.href = "SelectType.html";
+							});
 						});
-					});
+					} else {
+						location.href = "index.html";
+					}
+
 				}
 			});
 		}
