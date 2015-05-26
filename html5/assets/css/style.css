@@ -68,6 +68,9 @@ form,
     width: 350px;
     margin: 15px auto 0 auto;
     text-align: left;
+	font-family:Microsoft YaHei,Segoe UI,Tahoma,Arial,Verdana,sans-serif;
+	text-decoration:none;
+	width:100%;
 }
 
 input.account,
@@ -245,12 +248,6 @@ input.region,
 input.name,
 button,
 .form_div {
-	font-family:Microsoft YaHei,Segoe UI,Tahoma,Arial,Verdana,sans-serif;
-	text-decoration:none;
-	width:100%;
-}
-
-.form_left {
 	font-family:Microsoft YaHei,Segoe UI,Tahoma,Arial,Verdana,sans-serif;
 	text-decoration:none;
 	width:100%;

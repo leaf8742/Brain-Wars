@@ -106,10 +106,12 @@
 				var checkbox = document.createElement("input");
 				checkbox.type = "checkbox";
 				checkbox.id = "option_" + index;
+				checkbox.title = "valuevaluevalue";
 				document.getElementById("options").appendChild(checkbox);
 
 				var input = document.createElement("span")
 				input.innerHTML = element;
+				input.onclick = "onclickkk()";
 				document.getElementById("options").appendChild(input);
 
 				var br = document.createElement("br"); 
@@ -191,6 +193,10 @@
 				}
 			});
 		}
+
+function onclickkk() {
+	alert();
+}
 
 	</script>
 </html>
