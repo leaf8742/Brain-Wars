@@ -26,11 +26,11 @@
 	<body>
 		<div class="clock">
 			<ul>
-				<li id="hours"> </li>
+				<li id="hours">0</li>
 			    <li >:</li>
-			    <li id="min"> </li>
+			    <li id="min">01</li>
 			    <li >:</li>
-			    <li id="sec"> </li>
+			    <li id="sec">00</li>
 			</ul>
 		</div>
 
@@ -42,7 +42,7 @@
 			</div>
 
 			<div id = "controls" class="form_div">
-				<button type="prev" class="prev_button" onclick="fn_prev()">上一题</button>
+<!--				<button type="prev" class="prev_button" onclick="fn_prev()">上一题</button>-->
 				<button type="next" class="next_button" onclick="fn_next()">下一题</button>
 				<button type="handing" class="handing_button" onclick="fn_handing()">交卷</button>
 			</div>
@@ -54,33 +54,33 @@
 	<script src="assets/js/supersized.3.2.7.min.js" ></script>
 	<script src="assets/js/supersized-init.js" ></script>
 
-	<script type="text/javascript">
-		$(document).ready(function() {
-			setInterval(function() {
-				var datee = new Date();
-				var seconds = "00" + Math.floor((datee - crrentTime) / 1000 % 60);
-				seconds = seconds.substr(seconds.length - 2);
-				$("#sec").html(seconds);
-			},1000);
-
-			setInterval(function() {
-				var datee = new Date();
-				var minutes = "00" + Math.floor((datee - crrentTime) / 1000 / 60 % 60);
-				minutes = minutes.substr(minutes.length - 2);
-				$("#min").html(minutes);
-		    },1000);
-
-			setInterval(function() {
-				var datee = new Date();
-				var hours = Math.floor((datee - crrentTime) / 1000 / 60 / 60);
-				$("#hours").html(hours);
-			}, 1000);
-		});
-	</script>
-
 	<script>
 		var crrentTime = new Date();
 		load();
+
+		$(document).ready(function() {
+			setInterval(function() {
+				var timeout = currentTopic().startDate.getTime() + 61000;
+				var var_date = new Date();
+				var seconds = Math.floor((timeout - var_date) / 1000) % 60;
+				seconds = "00" + seconds;
+				seconds = seconds.substr(seconds.length - 2);
+				$("#sec").html(seconds);
+
+				var minutes = Math.floor((timeout - var_date) / 1000 / 60 % 60);
+				minutes = "00" + minutes;
+				minutes = minutes.substr(minutes.length - 2);
+				$("#min").html(minutes);
+			},1000);
+
+			setInterval(function() {
+				var timeout = currentTopic().startDate.getTime() + 60000;
+				var var_date = new Date();
+				if (var_date.getTime() - timeout > 0) {
+					fn_next();
+				}
+			}, 1000);
+		});
 
 		function getTopic(id) {
 			var topics = model.sharedInstance().selectedTopics;
@@ -93,25 +93,27 @@
 			return topic;
 		}
 
-		function currentTopic() {	
+		function currentTopic() {
 			return model.sharedInstance().selectedTopics[model.sharedInstance().currentIdx];
 		}
 
 		function load() {
 			var input = document.createElement("span");
-			input.innerHTML = currentTopic().description;
+			var m = model.sharedInstance();
+			input.innerHTML = (m.currentIdx + 1) + "/" + m.selectedTopics.length + "  " +  currentTopic().description;
 			document.getElementById("description").appendChild(input);
 
 			$(currentTopic().options).each(function(index, element){
 				var checkbox = document.createElement("input");
 				checkbox.type = "checkbox";
 				checkbox.id = "option_" + index;
-				checkbox.title = "valuevaluevalue";
 				document.getElementById("options").appendChild(checkbox);
 
-				var input = document.createElement("span")
+				var input = document.createElement("span");
 				input.innerHTML = element;
-				input.onclick = "onclickkk()";
+				input.onclick = function() {
+					checkbox.checked = !checkbox.checked;
+				};
 				document.getElementById("options").appendChild(input);
 
 				var br = document.createElement("br"); 
@@ -121,6 +123,8 @@
 			$(currentTopic().results).each(function(index, element) {
 				document.getElementById("option_" + element).checked = true;
 			});
+
+			currentTopic().startDate = new Date();
 
 			var m = model.sharedInstance();
 			$("prev").disabled = (m.currentIdx == 0);
@@ -139,10 +143,21 @@
 		}
 
 		function fn_next() {
+			record();
+
+			if (JSON.stringify(currentTopic().results) != JSON.stringify(currentTopic().correct)) {
+				var str_prompt = currentTopic().description + "\n";
+				str_prompt += "此题的正确答案为:";
+				$.each(currentTopic().correct, function(index, element) {
+					str_prompt += "\n" + currentTopic().options[element];
+				});
+				alert(str_prompt);
+			}
+
 			if (model.sharedInstance().currentIdx + 1 == model.sharedInstance().selectedTopics.length) {
+				fn_handing();
 				return;
 			}
-			record();
 			$("#options").empty();
 			$("#description").empty();
 			++model.sharedInstance().currentIdx;
@@ -187,17 +202,30 @@
 					if (!data.success) {
 						alert(data.msg);
 					} else {
-						alert("提交成功, 共计" + count + "道题，答对" + correct + "道题");
+						alert("提交成功, 共计" + count + "道题，答对" + correct + "道题，耗时" + timeString);
+						if (confirm("是否重新答题？")) {
+							$("#options").empty();
+							$("#description").empty();
+
+							get_topics_request(function(data, status) {
+								if (!data.success) {
+									alert(data.msg);
+									return;
+								}
+								model.sharedInstance().currentIdx = 0;
+								storage();
+								load();
+							});
+						} else {
+							location.href = "index.html";
+						}
 					}
-					location.href = "index.html";
 				}
 			});
 		}
 
-function onclickkk() {
-	alert();
+function temp() {
 }
-
 	</script>
 </html>
 

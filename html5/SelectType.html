@@ -37,6 +37,7 @@
 		function fn_training() {
 			var m = model.sharedInstance();
 			m.system = "training";
+			m.currentTime = new Date();
 			storage();
 			location.href = "Untitled.html";
 		}
@@ -44,6 +45,7 @@
 		function fn_semifinals() {
 			var m = model.sharedInstance();
 			m.system = "semifinals";
+			m.currentTime = new Date();
 			storage();
 			location.href = "Untitled.html";
 		}
@@ -51,6 +53,7 @@
 		function fn_finals() {
 			var m = model.sharedInstance();
 			m.system = "finals";
+			m.currentTime = new Date();
 			storage();
 			location.href = "Untitled.html";
 		}
