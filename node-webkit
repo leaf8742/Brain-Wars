@@ -1,0 +1,1 @@
+copy /b nw.exe+example1.zip example1.exe
