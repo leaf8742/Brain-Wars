@@ -32,9 +32,16 @@ ul li {
 
 body {
     background: #f8f8f8;
+	background-image:url(../img/background.png);
+	background-repeat: no-repeat;
+	background-size:100% 100%;
     text-align: center;
     color: #fff;
 	font-family:Microsoft YaHei,Segoe UI,Tahoma,Arial,Verdana,sans-serif;
+}
+
+#untitled {
+	background-image:url(../img/background2.png);
 }
 
 .page-container {
@@ -214,6 +221,11 @@ span {
     -moz-transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
+}
+
+.form_left span {
+    text-shadow: 0 1px 2px rgba(1, 1, 1, .1);
+    color: rgba(1, 1, 1, .5);
 }
 
 .connect {
