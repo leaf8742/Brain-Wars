@@ -107,12 +107,21 @@ function query_request(fn) {
 
 function get_topics_request(fn) {
 	var m = model.sharedInstance();
+	m.selectedTopics = new Array();
 
-	var topics = new Array();
-	while(topics.length != 20) {
+	return append_topics_request(fn);
+}
+
+function append_topics_request(fn) {
+	var m = model.sharedInstance();
+
+	var randoms = new Array();
+	while(randoms.length != 20) {
 		var random = Math.floor(Math.random() * (m.topics.length));
-		if ($.inArray(m.topics[random].id, topics) == -1) {
-			topics.push(m.topics[random].id);
+		var description = m.topics[random].description;
+		var invalid = (description === null || description === undefined ||  description == "");
+		if ($.inArray(m.topics[random].id, randoms) == -1 && invalid) {
+			randoms.push(m.topics[random].id);
 		}
 	}
 
@@ -120,18 +129,9 @@ function get_topics_request(fn) {
 		'type': 'POST',
 		'url': "http://121.42.192.153/topics/get",
 		'contentType': 'application/json',
-		'data': JSON.stringify({"session":m.session, topics:topics}),
+		'data': JSON.stringify({"session":m.session, topics:randoms}),
 		'dataType': 'json',
 		'success': function (data, status) {
-			var topics = new Array();
-			while(topics.length != 20) {
-				var random = Math.floor(Math.random() * (m.topics.length));
-				if ($.inArray(m.topics[random].id, topics) == -1) {
-					topics.push(m.topics[random].id);
-				}
-			}
-
-			m.selectedTopics = new Array();
 			$(data.topics).each(function(index, element) {
 				var topic;
 				$(m.topics).each(function(index, elementt) {
@@ -147,6 +147,6 @@ function get_topics_request(fn) {
 			});
 			fn(data, status);
 		}
-	});
+	});	
 }
 

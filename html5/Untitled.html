@@ -55,6 +55,7 @@
 	<script src="assets/js/supersized-init.js" ></script>
 
 	<script>
+		var requesting = false;
 		var crrentTime = new Date();
 		load();
 
@@ -80,6 +81,17 @@
 					fn_next();
 				}
 			}, 1000);
+
+			setInterval(function() {
+				var m = model.sharedInstance();
+
+				if (m.selectedTopics.length - m.currentIdx < 20 && !requesting && m.system == "semifinals") {
+					requesting = true;
+					append_topics_request(function(data, status) {
+						requesting = false;
+					});
+				}
+			}, 100);
 		});
 
 		function getTopic(id) {
@@ -100,7 +112,11 @@
 		function load() {
 			var input = document.createElement("span");
 			var m = model.sharedInstance();
-			input.innerHTML = (m.currentIdx + 1) + "/" + m.selectedTopics.length + "  " +  currentTopic().description;
+			var count = "/" + m.selectedTopics.length;
+			if (m.system == "semifinals") {
+				count = "";
+			}
+			input.innerHTML = (m.currentIdx + 1) + count + "  " +  currentTopic().description;
 			document.getElementById("description").appendChild(input);
 
 			$(currentTopic().options).each(function(index, element){
@@ -154,14 +170,24 @@
 				alert(str_prompt);
 			}
 
-			if (model.sharedInstance().currentIdx + 1 == model.sharedInstance().selectedTopics.length) {
+			var m = model.sharedInstance();
+			if (m.currentIdx + 1 == 20 && m.system == "training") {
 				fn_handing();
 				return;
+			} else if ((model.sharedInstance().currentIdx + 1) % 20 == 0) {
+				append_topics_request(function(data, status) {
+					$("#options").empty();
+					$("#description").empty();
+					++model.sharedInstance().currentIdx;
+					load();
+					return;
+				});
+			} else {
+				$("#options").empty();
+				$("#description").empty();
+				++model.sharedInstance().currentIdx;
+				load();
 			}
-			$("#options").empty();
-			$("#description").empty();
-			++model.sharedInstance().currentIdx;
-			load();
 		}
 
 		function fn_prev() {
@@ -223,9 +249,6 @@
 				}
 			});
 		}
-
-function temp() {
-}
 	</script>
 </html>
 
