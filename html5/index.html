@@ -39,6 +39,10 @@
 	<script src="assets/js/supersized.3.2.7.min.js" ></script>
 	<script src="assets/js/supersized-init.js" ></script>
 	<script>
+		$("#select").live("onclick",function(){
+			alert("");
+		});
+
 		function fn_keyup() {
 			$(".error").fadeOut('fast');
 		}
@@ -91,6 +95,7 @@
 		function fn_sign_up() {
 			location.href = "SignUp.html";
 		}
+
 	</script>
 
 </html>

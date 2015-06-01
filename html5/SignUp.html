@@ -24,10 +24,23 @@
 				<input type="text" name="account" class="account" placeholder="登录帐号" onkeyup="fn_keyup()">
 				<input type="password" name="password" class="password" placeholder="登录密码" onkeyup="fn_keyup()">
 				<input type="password" name="confirm" class="confirm" placeholder="重复密码" onkeyup="fn_keyup()">
-				<input type="text" name="locality" class="locality" placeholder="所属大区" onkeyup="fn_keyup()">
-				<input type="text" name="region" class="region" placeholder="所属地区" onkeyup="fn_keyup()">
+				<select id="locality" onchange="select()">
+					<optgroup label="所属大区">
+						<option>关琳</option>
+						<option>邓宏武</option>
+						<option>许玎玎</option>
+						<option>范薇</option>
+					</optgroup>
+				</select>
+
+				<select id="region">
+					<optgroup label="所属地区">
+					</optgroup>
+				</select>
+
 				<input type="text" name="name" class="name" placeholder="真实姓名" onkeyup="fn_keyup()">
 				<button type="sign_up" class="sign_up_button" onclick="fn_sign_up()">注册</button>
+
 				<div class="error">
 					<span>+</span>
 				</div>
@@ -41,6 +54,7 @@
 	<script src="assets/js/supersized.3.2.7.min.js" ></script>
 	<script src="assets/js/supersized-init.js" ></script>
 	<script>
+		select();
 
 		function fn_keyup() {
 			$(".error").fadeOut('fast');
@@ -50,8 +64,8 @@
 			var account = $(".account").val();
 			var password = $(".password").val();
 			var confirm_val = $(".confirm").val();
-			var locality = $(".locality").val();
-			var region = $(".region").val();
+			var locality = $('#locality option:selected').text();
+			var region = $('#region option:selected').text();
 			var name = $(".name").val();
 
 			if (password != confirm_val) {
@@ -87,6 +101,26 @@
 				}
 			});
 		}
+
+		function select() {
+			var regions = [["罗骏扬", "潘松峰", "牛志琴", "余黎勤", "陆孙峰", "杨永俊", "何佳佳", "刘萍", "姜兴海", "石琳"], ["徐冰冰", "韩玉娟", "刘金美", "张悦", "杜江波", "李天娇", "倪金培", "王振水"], ["汤玉芳", "崔阿旎", "王春旭", "刘熠"], ["柯城乡", "王飞", "白红梅", "邓吉春", "齐娟"]];
+			var selectedIndex = $("#locality").get(0).selectedIndex;
+			$("#region").empty();
+			var var_prompt = document.createElement("optgroup");
+			var_prompt.label = "所属地区";
+			document.getElementById("region").appendChild(var_prompt);
+
+			$.each(regions[selectedIndex], function(index, element) {
+				var checkbox = document.createElement("option");
+				checkbox.innerHTML = element;
+				var_prompt.appendChild(checkbox);
+			});
+// $("#locality").get(0).selectedIndex;//索引
+// $('#locality option:selected').val();//值 
+// $('#locality option:selected').text();
+// http://blog.csdn.net/foart/article/details/6614829
+		}
+
 	</script>
 </html>
 

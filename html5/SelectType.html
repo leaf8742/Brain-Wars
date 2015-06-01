@@ -25,6 +25,23 @@
 				<button type="semifinals" class="semifinals_button" onclick="fn_semifinals()">区域赛</button>
 				<button type="finals" class="finals_button" onclick="fn_finals()">决赛</button>
 			</div>
+
+			<select id="locality" onchange="select()" hidden="hidden">
+				<optgroup label="所属大区">
+					<option>关琳</option>
+					<option>邓宏武</option>
+					<option>许玎玎</option>
+					<option>范薇</option>
+				</optgroup>
+			</select>
+
+			<select id="region" hidden="hidden">
+				<optgroup label="所属地区">
+				</optgroup>
+			</select>
+
+			<button id="okay" type="finals" class="finals_button" onclick="okay()" hidden="hidden">确认</button>
+
 		</div>
 	</body>
 
@@ -34,6 +51,8 @@
 	<script src="assets/js/supersized.3.2.7.min.js" ></script>
 	<script src="assets/js/supersized-init.js" ></script>
 	<script>
+		select();
+
 		function fn_training() {
 			var m = model.sharedInstance();
 			m.system = "training";
@@ -43,6 +62,12 @@
 		}
 
 		function fn_semifinals() {
+			document.getElementById("locality").hidden = "";
+			document.getElementById("region").hidden = "";
+			document.getElementById("okay").hidden = "";
+		}
+
+		function okay() {
 			var m = model.sharedInstance();
 			m.system = "semifinals";
 			m.currentTime = new Date();
@@ -57,6 +82,26 @@
 			storage();
 			location.href = "Untitled.html";
 		}
+
+		function select() {
+			var regions = [["罗骏扬", "潘松峰", "牛志琴", "余黎勤", "陆孙峰", "杨永俊", "何佳佳", "刘萍", "姜兴海", "石琳"], ["徐冰冰", "韩玉娟", "刘金美", "张悦", "杜江波", "李天娇", "倪金培", "王振水"], ["汤玉芳", "崔阿旎", "王春旭", "刘熠"], ["柯城乡", "王飞", "白红梅", "邓吉春", "齐娟"]];
+			var selectedIndex = $("#locality").get(0).selectedIndex;
+			$("#region").empty();
+			var var_prompt = document.createElement("optgroup");
+			var_prompt.label = "所属地区";
+			document.getElementById("region").appendChild(var_prompt);
+
+			$.each(regions[selectedIndex], function(index, element) {
+				var checkbox = document.createElement("option");
+				checkbox.innerHTML = element;
+				var_prompt.appendChild(checkbox);
+			});
+// $("#locality").get(0).selectedIndex;//索引
+// $('#locality option:selected').val();//值 
+// $('#locality option:selected').text();
+// http://blog.csdn.net/foart/article/details/6614829
+		}
+
 	</script>
 </html>
 
