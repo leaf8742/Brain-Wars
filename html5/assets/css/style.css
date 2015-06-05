@@ -285,8 +285,12 @@ button.sign_in_button{
 button.sign_up_button{
 	font-size:24px;
 	letter-spacing:15px;
-    background: #ef4300;
-    border: 1px solid #ff730e;
+	background: #ef4300;
+	border: 1px solid #ff730e;
+}
+
+button.harf{
+	width:45%
 }
 
 input.Captcha{
