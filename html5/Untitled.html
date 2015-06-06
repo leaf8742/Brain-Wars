@@ -161,11 +161,14 @@
 		function fn_next() {
 			record();
 
-			if (JSON.stringify(currentTopic().results) != JSON.stringify(currentTopic().correct)) {
-				var str_prompt = currentTopic().description + "\n";
-				str_prompt += "此题的正确答案为:";
+			if (m.system = "training" && JSON.stringify(currentTopic().results) != JSON.stringify(currentTopic().correct)) {
+				var str_prompt = "";
+//				str_prompt += "此题的正确答案为:";
 				$.each(currentTopic().correct, function(index, element) {
-					str_prompt += "\n" + optionOrder[index] + " " + currentTopic().options[element];
+					if (str_prompt.length != 0) {
+						str_prompt += "\n";
+					}
+					str_prompt += optionOrder[index] + " " + currentTopic().options[element];
 				});
 				alert(str_prompt);
 			}
@@ -204,6 +207,9 @@
 		function fn_handing() {
 			var m = model.sharedInstance();
 			var count = m.selectedTopics.length;
+			if (m.system == "semifinals") {
+				count = m.currentIdx + 1;
+			}
 			var correct = 0;
 			$.each(m.selectedTopics, function(index, element) {
 				if (JSON.stringify(element.results) == JSON.stringify(element.correct)) {
