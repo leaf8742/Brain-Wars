@@ -70,6 +70,14 @@ form,
     text-align: center;
 }
 
+.form_right {
+    position: relative;
+	width: relative;
+	height: relative;
+	margin: 45% 10% 0 60%;
+	text-align: center;
+}
+
 .form_left {
     position: relative;
     width: 350px;
@@ -81,7 +89,9 @@ form,
 }
 
 input.account,
+input.login_account,
 input.password,
+input.login_password,
 input.confirm,
 input.locality,
 input.region,
@@ -262,7 +272,9 @@ span {
 /*－－－增加部份的CSS－－－*/
 form,
 input.account,
+input.login_account,
 input.password,
+input.login_password,
 input.confirm,
 input.locality,
 input.region,
@@ -277,16 +289,32 @@ optgroup,
 	width:100%;
 }
 
-button.sign_in_button{
+input.login_account,
+input.login_password {
+    width: 100%;
+	height: 32px;
+    margin-top: 8px;	
+}
+
+button.sign_in_button,
+button.login_sign_in_button {
 	font-size:24px;
 	letter-spacing:15px;
 }
 
-button.sign_up_button{
+button.sign_up_button,
+button.login_sign_up_button {
 	font-size:24px;
 	letter-spacing:15px;
 	background: #ef4300;
 	border: 1px solid #ff730e;
+}
+
+button.login_sign_up_button,
+button.login_sign_in_button {
+    width: 100%;
+	height: 32px;
+    margin-top: 8px;
 }
 
 button.harf{
