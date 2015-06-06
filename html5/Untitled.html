@@ -235,6 +235,9 @@
 						alert(data.msg);
 					} else {
 						alert("提交成功, 共计" + count + "道题，答对" + correct + "道题，耗时" + timeString);
+						if (m.system == "semifinals") {
+							location.href = "index.html";
+						}
 						if (confirm("是否重新答题？")) {
 							$("#options").empty();
 							$("#description").empty();
