@@ -70,6 +70,13 @@ form,
     text-align: center;
 }
 
+.form_selectType {
+    position: relative;
+    width: 350px;
+    margin: 40% auto 0 auto;
+    text-align: center;
+}
+
 .form_right {
     position: relative;
 	width: relative;

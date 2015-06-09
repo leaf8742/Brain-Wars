@@ -40,14 +40,14 @@
 		}
 
 		function fn_sign_in() {
-			var account = $(".account").val();
-			var password = $(".password").val();
+			var account = $(".login_account").val();
+			var password = $(".login_password").val();
 			if(account == '') {
 				$(".error").fadeOut('fast', function(){
 					$(this).css('top', '27px');
 				});
 				$(".error").fadeIn('fast', function(){
-					$(".account").focus();
+					$(".login_account").focus();
 				});
 				return;
 			} else if(password == '') {

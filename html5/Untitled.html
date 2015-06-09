@@ -161,7 +161,8 @@
 		function fn_next() {
 			record();
 
-			if (m.system = "training" && JSON.stringify(currentTopic().results) != JSON.stringify(currentTopic().correct)) {
+			var m = model.sharedInstance();
+			if (m.system == "training" && JSON.stringify(currentTopic().results) != JSON.stringify(currentTopic().correct)) {
 				var str_prompt = "";
 //				str_prompt += "此题的正确答案为:";
 				$.each(currentTopic().correct, function(index, element) {
@@ -173,18 +174,17 @@
 				alert(str_prompt);
 			}
 
-			var m = model.sharedInstance();
 			if (m.currentIdx + 1 == 20 && m.system == "training") {
 				fn_handing();
 				return;
-			} else if ((model.sharedInstance().currentIdx + 1) % 20 == 0) {
-				append_topics_request(function(data, status) {
-					$("#options").empty();
-					$("#description").empty();
-					++model.sharedInstance().currentIdx;
-					load();
-					return;
-				});
+//			} else if ((model.sharedInstance().currentIdx + 1) % 20 == 0) {
+//				append_topics_request(function(data, status) {
+//					$("#options").empty();
+//					$("#description").empty();
+//					++model.sharedInstance().currentIdx;
+//					load();
+//					return;
+//				});
 			} else {
 				$("#options").empty();
 				$("#description").empty();
