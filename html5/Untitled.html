@@ -14,6 +14,10 @@
 
 		<!-- CSS -->
 		<link rel="stylesheet" href="assets/css/style.css">
+<!--		<link rel="stylesheet" href="assets/css/bootstrap-theme.css">-->
+<!--		<link rel="stylesheet" href="assets/css/bootstrap-theme.min.css">-->
+<!--		<link rel="stylesheet" href="assets/css/bootstrap.css">-->
+		<link rel="stylesheet" href="assets/css/bootstrap.min.css">
 
 		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
@@ -40,39 +44,71 @@
 			</div>
 
 			<div id = "controls" class="form_div">
-<!--				<button type="prev" class="prev_button" onclick="fn_prev()">上一题</button>-->
 				<button type="next" class="harf" onclick="fn_next()">确定</button>
 				<button type="handing" class="harf" onclick="fn_handing()">交卷</button>
 			</div>
 		</div>
+
+<!--弹出对话框-->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+<!--					<div class="modal-header">-->
+<!--						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>-->
+<!--						<h4 class="modal-title" id="myModalLabel">模态框（Modal）标题</h4>-->
+<!--					</div>-->
+					<div id="prompt_string" class="modal-body"></div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+<!--						<button type="button" class="btn btn-primary">提交更改</button>-->
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
 	</body>
 
 	<script type="text/javascript" src="assets/js/jquery-1.11.3.min.js" ></script>
 	<script type="text/javascript" src="assets/js/scripts.js" ></script>
+	<script type="text/javascript" src="assets/js/bootstrap.min.js" ></script>
 
 	<script>
 		var requesting = false;
 		var crrentTime = new Date();
 		var optionOrder = ["A", "B", "C", "D", "E", "F", "G"];
+		var pause = false;
 
 		load();
 
 		$(document).ready(function() {
 			setInterval(function() {
+				if (pause) {
+					return;
+				}
+
 				var timeout = currentTopic().startDate.getTime() + 21000;
 				var var_date = new Date();
 				var seconds = Math.floor((timeout - var_date) / 1000) % 60;
+				if (seconds <= 0) {
+					seconds = 0;
+				}
 				seconds = "00" + seconds;
 				seconds = seconds.substr(seconds.length - 2);
 				$("#sec").html(seconds);
 
 				var minutes = Math.floor((timeout - var_date) / 1000 / 60 % 60);
+				if (minutes <= 0) {
+					minutes = 0;
+				}
 				minutes = "00" + minutes;
 				minutes = minutes.substr(minutes.length - 2);
 				$("#min").html(minutes);
 			},1000);
 
 			setInterval(function() {
+				if (pause) {
+					return;
+				}
+
 				var timeout = currentTopic().startDate.getTime() + 20000;
 				var var_date = new Date();
 				if (var_date.getTime() - timeout > 0) {
@@ -171,7 +207,24 @@
 					}
 					str_prompt += optionOrder[index] + " " + currentTopic().options[element];
 				});
-				alert(str_prompt);
+
+				pause = true;
+				prompt_string.innerHTML = str_prompt;
+				$('#myModal').modal('show');
+				$('#myModal').on('hide.bs.modal', function () {
+					pause = false;
+
+					if (m.currentIdx + 1 == 20 && m.system == "training") {
+						fn_handing();
+						return;
+					} else {
+						$("#options").empty();
+						$("#description").empty();
+						++model.sharedInstance().currentIdx;
+						load();
+						return;
+					}
+				});
 			}
 
 			if (m.currentIdx + 1 == 20 && m.system == "training") {
@@ -224,11 +277,13 @@
 			second = second.substr(second.length - 2);
 			var timeString = hour + ":" + minute + ":" + second;
 
+			var data = JSON.stringify({"session":m.session, "numberOfTopics":count, "numberOfCorrect":correct, "numberOfMistake":count - correct, "time":timeString, "system":m.system, "localMarketing":m.local_marketing});
+
 			$.ajax({
 				'type': 'POST',
 				'url': "http://121.42.192.153/exam/uploadResult",
 				'contentType': 'application/json',
-				'data': JSON.stringify({"session":m.session, "numberOfTopics":count, "numberOfCorrect":correct, "numberOfMistake":count - correct, "time":timeString, "system":m.system}),
+				'data': data,
 				'dataType': 'json',
 				'success': function (data, status) {
 					if (!data.success) {

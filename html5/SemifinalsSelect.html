@@ -32,44 +32,57 @@
 	<script type="text/javascript" src="assets/js/jquery-1.11.3.min.js" ></script>
 	<script type="text/javascript" src="assets/js/scripts.js" ></script>
 	<script>
-		function fn_select0() {
+		function fn_select() {
 			var m = model.sharedInstance();
+			m.session = undefined;
 			m.system = "semifinals";
 			m.currentTime = new Date();
 			storage();
-			location.href = "Untitled.html";
+
+			query_request(function(data, status) {
+				if (!data.success) {
+					alert(data.msg);
+					return;
+				}
+				get_topics_request(function(data, status) {
+					if (!data.success) {
+						alert(data.msg);
+						return;
+					}
+					storage();
+					location.href = "Untitled.html";
+				});
+			});
+		}
+
+		function fn_select0() {
+			var m = model.sharedInstance();
+			m.local_marketing = "史妍";
+			fn_select();
 		}
 
 		function fn_select1() {
 			var m = model.sharedInstance();
-			m.system = "semifinals";
-			m.currentTime = new Date();
-			storage();
-			location.href = "Untitled.html";
+			m.local_marketing = "梁志";
+			fn_select();
 		}
 
 		function fn_select2() {
 			var m = model.sharedInstance();
-			m.system = "semifinals";
-			m.currentTime = new Date();
-			storage();
-			location.href = "Untitled.html";
+			m.local_marketing = "钟云海";
+			fn_select();
 		}
 
 		function fn_select3() {
 			var m = model.sharedInstance();
-			m.system = "semifinals";
-			m.currentTime = new Date();
-			storage();
-			location.href = "Untitled.html";
+			m.local_marketing = "孙颖";
+			fn_select();
 		}
 
 		function fn_select4() {
 			var m = model.sharedInstance();
-			m.system = "semifinals";
-			m.currentTime = new Date();
-			storage();
-			location.href = "Untitled.html";
+			m.local_marketing = "严云莉";
+			fn_select();
 		}
 	</script>
 </html>

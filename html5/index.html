@@ -9,6 +9,7 @@
 
 		<!-- CSS -->
 		<link rel="stylesheet" href="assets/css/style.css">
+		<link rel="stylesheet" href="assets/css/bootstrap.min.css">
 
 		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
@@ -17,17 +18,16 @@
 	</head>
 
 	<body>
-
-			<div class="form_right">
-				<input type="text" class="login_account" placeholder="用户名" onkeyup="fn_keyup()">
-				<input type="password" class="login_password" placeholder="密码" onkeyup="fn_keyup()">
-				<button type="sign_in" class="login_sign_in_button" onclick="fn_sign_in()">登录</button>
-				<button type="sign_up" class="login_sign_up_button" onclick="fn_sign_up()">注册</button>
-				<button type="sign_up" class="login_sign_up_button" onclick="fn_semifinals()">区域赛</button>
-				<div class="error">
-					<span>+</span>
-				</div>
+		<div class="form_right">
+			<input type="text" class="login_account" placeholder="用户名" onkeyup="fn_keyup()">
+			<input type="password" class="login_password" placeholder="密码" onkeyup="fn_keyup()">
+			<button type="sign_in" class="login_sign_in_button" onclick="fn_sign_in()">登录</button>
+			<button type="sign_up" class="login_sign_up_button" onclick="fn_sign_up()">注册</button>
+			<button type="sign_up" class="login_sign_up_button" onclick="fn_semifinals()">区域赛</button>
+			<div class="error">
+				<span>+</span>
 			</div>
+		</div>
 
 	</body>
 
@@ -60,6 +60,8 @@
 				return;
 			}
 
+			var m = model.sharedInstance();
+			m.local_marketing = undefined;
 			sign_in_request(account, password, function(data, status) {
 				if (!data.success) {
 					alert(data.msg);
