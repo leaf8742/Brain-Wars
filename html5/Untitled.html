@@ -65,6 +65,33 @@
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
+
+<!--提交成功对话框-->
+		<div class="modal fade" id="upload" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div id="upload_string" class="modal-body"></div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
+<!--提交成功对话框-->
+		<div class="modal fade" id="reAnswer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-body">是否重新答题?</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" onclick='fn_re_answer()'>确定</button>
+						<button type="button" class="btn btn-default" onclick='fn_not_re_answer()'>取消</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
+
 	</body>
 
 	<script type="text/javascript" src="assets/js/jquery-1.11.3.min.js" ></script>
@@ -85,6 +112,7 @@
 					return;
 				}
 
+				var temp = currentTopic();
 				var timeout = currentTopic().startDate.getTime() + 21000;
 				var var_date = new Date();
 				var seconds = Math.floor((timeout - var_date) / 1000) % 60;
@@ -127,6 +155,44 @@
 				}
 			}, 100);
 		});
+
+		$('#myModal').on('hide.bs.modal', function () {
+			pause = false;
+			next();
+			return;
+		});
+
+		$('#upload').on('hide.bs.modal', function () {
+			pause = false;
+
+			var m = model.sharedInstance();
+			if (m.system == "semifinals") {
+				location.href = "index.html";
+			}
+
+			$('#reAnswer').modal('show');
+		});
+
+		function fn_re_answer() {
+			$('#reAnswer').modal('hide');
+			$("#options").empty();
+			$("#description").empty();
+
+			get_topics_request(function(data, status) {
+				if (!data.success) {
+					alert(data.msg);
+					return;
+				}
+				model.sharedInstance().currentIdx = 0;
+				storage();
+				load();
+			});
+		}
+
+		function fn_not_re_answer() {
+			$('#reAnswer').modal('hide');
+			location.href = "SelectType.html";			
+		}
 
 		function getTopic(id) {
 			var topics = model.sharedInstance().selectedTopics;
@@ -194,55 +260,31 @@
 			model.sharedInstance().selectedTopics[model.sharedInstance().currentIdx].results = results;
 		}
 
+		function next() {
+			$("#options").empty();
+			$("#description").empty();
+			++model.sharedInstance().currentIdx;
+			load();
+		}
+
 		function fn_next() {
 			record();
 
 			var m = model.sharedInstance();
 			if (m.system == "training" && JSON.stringify(currentTopic().results) != JSON.stringify(currentTopic().correct)) {
 				var str_prompt = "";
-//				str_prompt += "此题的正确答案为:";
 				$.each(currentTopic().correct, function(index, element) {
-//					if (str_prompt.length != 0) {
-//						str_prompt += "\n";
-//					}
 					str_prompt += "<p>" + optionOrder[index] + " " + currentTopic().options[element] + "</p>";
 				});
 
 				pause = true;
 				prompt_string.innerHTML = str_prompt;
 				$('#myModal').modal('show');
-				$('#myModal').on('hide.bs.modal', function () {
-					pause = false;
-
-					if (m.currentIdx + 1 == 20 && m.system == "training") {
-						fn_handing();
-						return;
-					} else {
-						$("#options").empty();
-						$("#description").empty();
-						++model.sharedInstance().currentIdx;
-						load();
-						return;
-					}
-				});
-			}
-
-			if (m.currentIdx + 1 == 20 && m.system == "training") {
+			} else if (m.currentIdx + 1 == 20 && m.system == "training") {
 				fn_handing();
 				return;
-//			} else if ((model.sharedInstance().currentIdx + 1) % 20 == 0) {
-//				append_topics_request(function(data, status) {
-//					$("#options").empty();
-//					$("#description").empty();
-//					++model.sharedInstance().currentIdx;
-//					load();
-//					return;
-//				});
 			} else {
-				$("#options").empty();
-				$("#description").empty();
-				++model.sharedInstance().currentIdx;
-				load();
+				next();
 			}
 		}
 
@@ -289,26 +331,9 @@
 					if (!data.success) {
 						alert(data.msg);
 					} else {
-						alert("提交成功, 共计" + count + "道题，答对" + correct + "道题，耗时" + timeString);
-						if (m.system == "semifinals") {
-							location.href = "index.html";
-						}
-						if (confirm("是否重新答题？")) {
-							$("#options").empty();
-							$("#description").empty();
-
-							get_topics_request(function(data, status) {
-								if (!data.success) {
-									alert(data.msg);
-									return;
-								}
-								model.sharedInstance().currentIdx = 0;
-								storage();
-								load();
-							});
-						} else {
-							location.href = "SelectType.html";
-						}
+						var strPrompt = "提交成功, 共计" + count + "道题，答对" + correct + "道题，耗时" + timeString;
+						upload_string.innerHTML = strPrompt;
+						$('#upload').modal('show');
 					}
 				}
 			});
