@@ -202,10 +202,10 @@
 				var str_prompt = "";
 //				str_prompt += "此题的正确答案为:";
 				$.each(currentTopic().correct, function(index, element) {
-					if (str_prompt.length != 0) {
-						str_prompt += "\n";
-					}
-					str_prompt += optionOrder[index] + " " + currentTopic().options[element];
+//					if (str_prompt.length != 0) {
+//						str_prompt += "\n";
+//					}
+					str_prompt += "<p>" + optionOrder[index] + " " + currentTopic().options[element] + "</p>";
 				});
 
 				pause = true;
